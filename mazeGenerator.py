@@ -1,11 +1,6 @@
-# Maze generator -- Randomized Prim Algorithm
-# https://medium.com/swlh/fun-with-python-1-maze-generator-931639b4fb7e
-
-## Imports
 import random
-import time
 from colorama import init
-from colorama import Fore, Back, Style
+from colorama import Fore
 
 
 class MazeGenerator:
@@ -29,17 +24,34 @@ class MazeGenerator:
                     print(Fore.BLUE + str(maze[i][j]), end="  ")
                 elif maze[i][j] == 'o':
                     print(Fore.RESET + str(maze[i][j]), end="  ")
-                elif maze[i][j] == 'p':
-                    print(Fore.GREEN + str(maze[i][j]), end="  ")
                 elif maze[i][j] == 'v':
                     print(Fore.BLUE + str(maze[i][j]), end="  ")
-                elif maze[i][j] == 'S' or maze[i][j] == 'G':
+                elif maze[i][j] == 'S' or maze[i][j] == 'G' or maze[i][j] == 'p':
                     print(Fore.LIGHTGREEN_EX + str(maze[i][j]), end="  ")
                 else:
                     print(Fore.RED + str(maze[i][j]), end="  ")
 
             print('')
         print(Fore.RESET)
+
+    def printMazeSmooth(self, maze):
+        out = ""
+        for i in range(0, self.height):
+            for j in range(0, self.width):
+                if maze[i][j] == 'u':
+                    out = out + Fore.BLUE + str(maze[i][j]) + "  "
+                elif maze[i][j] == 'o':
+                    out = out + Fore.RESET + str(maze[i][j]) + "  "
+                elif maze[i][j] == 'v':
+                    out = out + Fore.BLUE + str(maze[i][j]) + "  "
+                elif maze[i][j] == 'S' or maze[i][j] == 'G' or maze[i][j] == 'p':
+                    out = out + Fore.LIGHTGREEN_EX + str(maze[i][j]) + "  "
+                else:
+                    out = out + Fore.RED + str(maze[i][j]) + "  "
+            out = out + '\n'
+        print(Fore.RESET)
+        # print(out, end='\r')
+        return out
 
     # Find number of surrounding cells
     def surroundingCells(self, rand_wall):

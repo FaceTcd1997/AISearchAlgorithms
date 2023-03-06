@@ -1,3 +1,6 @@
+import random
+from node import mazeToTree
+from node import Node
 
 """  Recursive depth-first search algorithm for trees that keeps track of visited nodes
      and the correct path to the goal.
@@ -37,37 +40,25 @@ def getPath(node, goal, visited=None, path=None):
     # Return None if the goal node is not found in the tree
     return None
 
-"""  Recursive depth-first search algorithm for trees that keeps track of visited nodes
-     and the correct path to the goal.
+def getHeuristic(node, goal, maze):
+    getCost(node, goal, maze)
 
-     INPUT:
-       node: the root node of the tree
-       goal: the goal node to search for
-       visited: a set of visited nodes (default to an empty set)
-       path: a list of nodes that represent the path to the current node (default to an empty list)
-     RETURN:
-       tuple containing the list of nodes composing the path to the goal and the list of nodes visited"""
-def depthFirstSearch(node, goal, visited=None):
-
-    if visited is None:
-        visited = set()
-
-    # Add the current node to the visited set
-    visited.add(node)
-
-    # If the goal node is found, return the path to it and the visited set
-    if node == goal:
-        return list(visited)
-
-    # Recursively search for the goal node in the branches of the current node
     for child in node.branches:
-        if child not in visited:
-            result = depthFirstSearch(child, goal, visited)
-            if result is not None:
-                return result
+        getHeuristic(child, goal, maze)
 
-    # Return None if the goal node is not found in the tree
-    return None
+    return
+
+def getCost(start, goal, maze):
+    shadow = Node(start.x, start.y)
+    tree = mazeToTree(maze, shadow)
+    start.cost = len(getPath(tree, goal)) - 1
+
+    return
+
+
+
+#TODO
+# fix comments
 
 """  Recursive depth-first search algorithm for trees that keeps track of visited nodes
      and the correct path to the goal.
@@ -79,28 +70,39 @@ def depthFirstSearch(node, goal, visited=None):
        path: a list of nodes that represent the path to the current node (default to an empty list)
      RETURN:
        tuple containing the list of nodes composing the path to the goal and the list of nodes visited"""
-def breadthFirstSearch(node, goal, visited=None, queue=None):
 
+#TODO
+def depthFirstSearch(node, goal):
+    return treeSearch(node, goal, True)
+def breadthFirstSearch(node, goal):
+    return treeSearch(node, goal, False)
+
+def treeSearch(node, goal, flag, visited=None, queue=None, level=None):
     if visited is None:
         visited = set()
     if queue is None:
         queue = []
+    if level is None:
+        level = 0
+    else:
+        level = level + 1
 
     visited.add(node)
-    queue.append(node)
 
-    while queue:
-        current = queue.pop(0)
+    if node == goal:
+        # queue.clear()
+        return visited
 
-        if current == goal:
-            return list(visited)
+    for child in node.branches:
+        queue.append([child, level])
 
-        for child in current.branches:
-            if child not in visited:
-                visited.add(child)
-                queue.append(child)
+    queue.sort(key=lambda tup: tup[1], reverse=flag)
+    treeSearch(queue.pop(0)[0], goal, flag, visited, queue, level)
 
-    return list(visited)
+    return visited
+
+
+
 
 
 

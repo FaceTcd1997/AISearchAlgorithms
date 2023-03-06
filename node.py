@@ -1,9 +1,11 @@
 
 class Node:
 
-    def __init__(self, x, y):
+    def __init__(self, x, y, cost=None, heuristic=None):
         self.x = x
         self.y = y
+        self.cost = cost
+        self.heuristic = heuristic
         self.branches = []
 
     def addChild(self, node):
@@ -23,16 +25,16 @@ class Node:
 
 
 def getNeighbors(maze, node):
-    neighbors = []
+    neighbors = set()
     x, y = node.x, node.y
-    if y > 0 and maze[x][y - 1] == 'o':  # check left neighbor
-        neighbors.append(Node(x, y - 1))
-    if y < len(maze[0]) - 1 and maze[x][y + 1] == 'o':  # check right neighbor
-        neighbors.append(Node(x, y + 1))
-    if x > 0 and maze[x - 1][y] == 'o':  # check top neighbor
-        neighbors.append(Node(x - 1, y))
-    if x < len(maze) - 1 and maze[x + 1][y] == 'o':  # check bottom neighbor
-        neighbors.append(Node(x + 1, y))
+    if y > 0 and maze[x][y - 1] != '*':  # check left neighbor
+        neighbors.add(Node(x, y - 1))
+    if y < len(maze[0]) - 1 and maze[x][y + 1] != '*':  # check right neighbor
+        neighbors.add(Node(x, y + 1))
+    if x > 0 and maze[x - 1][y] != '*':  # check top neighbor
+        neighbors.add(Node(x - 1, y))
+    if x < len(maze) - 1 and maze[x + 1][y] != '*':  # check bottom neighbor
+        neighbors.add(Node(x + 1, y))
     return neighbors
 
 def diff(list1, list2):
@@ -42,7 +44,9 @@ def diff(list1, list2):
             out.append(node)
     return out
 
-def mazeToTree(maze, node, visited):
+def mazeToTree(maze, node, visited=None):
+    if visited is None:
+        visited = []
     # Add to visited nodes
     visited.append(node)
     # Get unvisited neighbors
