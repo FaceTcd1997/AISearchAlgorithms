@@ -51,8 +51,13 @@ def getHeuristic(node, goal, maze):
 def getCost(start, goal, maze):
     shadow = Node(start.x, start.y)
     tree = mazeToTree(maze, shadow)
-    start.cost = len(getPath(tree, goal)) - 1
 
+    start.cost = len(getPath(tree, goal)) - 1
+    # To be optimal heuristic has to be admissible (heuristic < cost)
+    if start.cost > 0:
+        start.heuristic = random.randint(0, start.cost - 1)
+    else:
+        start.heuristic = 0
     return
 
 
@@ -76,6 +81,8 @@ def depthFirstSearch(node, goal):
     return treeSearch(node, goal, True)
 def breadthFirstSearch(node, goal):
     return treeSearch(node, goal, False)
+def aStarSearch(node, goal):
+    return heuristicSearch(node, goal)
 
 def treeSearch(node, goal, flag, visited=None, queue=None, level=None):
     if visited is None:
@@ -96,13 +103,30 @@ def treeSearch(node, goal, flag, visited=None, queue=None, level=None):
     for child in node.branches:
         queue.append([child, level])
 
+    #TODO
+    # Sorting queue influence execution time ?!?
     queue.sort(key=lambda tup: tup[1], reverse=flag)
     treeSearch(queue.pop(0)[0], goal, flag, visited, queue, level)
 
     return visited
 
+def heuristicSearch(node, goal, visited=None, queue=None):
+    if visited is None:
+        visited = set()
+    if queue is None:
+        queue = []
 
+    visited.add(node)
 
+    if node == goal:
+        return visited
 
+    for child in node.branches:
+        queue.append([child, child.cost + child.heuristic])
 
+    #TODO
+    # Sorting queue influence execution time ?!?
+    queue.sort(key=lambda tup: tup[1])
+    heuristicSearch(queue.pop(0)[0], goal, visited, queue)
 
+    return visited

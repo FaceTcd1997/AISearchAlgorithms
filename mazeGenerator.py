@@ -1,6 +1,7 @@
 import random
 from colorama import init
 from colorama import Fore
+import numpy as np
 
 
 class MazeGenerator:
@@ -312,7 +313,8 @@ class MazeGenerator:
         return n
 
     def printSolvedMaze(self, path, visited):
-        result = self.maze
+        # Generate a copy of maze instead of referencing it (avoids override)
+        result = np.array(self.maze)
         for node in visited:
             result[node.x][node.y] = 'v'
         for node in path:
@@ -320,6 +322,6 @@ class MazeGenerator:
 
         start = self.getStart()
         goal = self.getEnd()
-        self.maze[start[0]][start[1]] = 'S'
-        self.maze[goal[0]][goal[1]] = 'G'
+        result[start[0]][start[1]] = 'S'
+        result[goal[0]][goal[1]] = 'G'
         self.printMaze(result)

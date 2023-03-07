@@ -2,18 +2,17 @@ from mazeGenerator import MazeGenerator
 
 from node import Node
 from node import mazeToTree
-
 from search import getPath
 from search import depthFirstSearch
 from search import breadthFirstSearch
 from search import getHeuristic
-
+from search import aStarSearch
 from timeit import default_timer as timer
 
 
 # Define height and width of the maze
-height = 30
-width = 30
+height = 20
+width = 20
 # Initialize generator
 mazeGenerator = MazeGenerator(height, width)
 
@@ -49,22 +48,27 @@ resultBFS = breadthFirstSearch(tree, goal)
 endTimeBFS = timer()
 timeBFS = endTimeBFS - startTimeBFS
 
+# Include heuristic to the nodes
+getHeuristic(tree, goal, maze)
+# Save the time before executing search
+startTimeA = timer()
+# Run DFS
+resultA = aStarSearch(tree, goal)
+# Calculate execution time
+endTimeA = timer()
+timeA = endTimeA - startTimeA
+
 
 path = getPath(tree, goal)
 mazeGenerator.printSolvedMaze(path, resultDFS)
 mazeGenerator.printSolvedMaze(path, resultBFS)
+mazeGenerator.printSolvedMaze(path, resultA)
 
-print("DFS exec time: ", timeDFS)
+
+print("DFS exec time: %.10f" % timeDFS)
 print(" Number of nodes visited: ", len(resultDFS))
-print("BFS exec time: ", timeBFS)
+print("BFS exec time: %.10f" % timeBFS)
 print(" Number of nodes visited: ", len(resultBFS))
-
-# heuristicTree = generateHeuristic(tree, goal, maze)
-#nodes = getNodes(tree)
-#heuristicNodes = generateHeuristic(nodes, goal, maze)
-
-#root = Node(start[0], start[1])
-#tree = mazeToTree(maze, root)
-#saveCost(tree, heuristicNodes)
-#getHeuristic(tree, goal, maze)
+print("A* exec time: %.10f" % timeA)
+print(" Number of nodes visited: ", len(resultA))
 print()
