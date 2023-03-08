@@ -314,14 +314,46 @@ class MazeGenerator:
 
     def printSolvedMaze(self, path, visited):
         # Generate a copy of maze instead of referencing it (avoids override)
-        result = np.array(self.maze)
+        copy = np.array(self.maze)
         for node in visited:
-            result[node.x][node.y] = 'v'
+            copy[node.x][node.y] = 'v'
         for node in path:
-            result[node.x][node.y] = 'p'
+            copy[node.x][node.y] = 'p'
 
         start = self.getStart()
         goal = self.getEnd()
-        result[start[0]][start[1]] = 'S'
-        result[goal[0]][goal[1]] = 'G'
-        self.printMaze(result)
+        copy[start[0]][start[1]] = 'S'
+        copy[goal[0]][goal[1]] = 'G'
+        self.printMaze(copy)
+
+    def getValues(self, node, copy = None):
+        if copy is None:
+            copy = []
+            for h in range(0, self.height):
+                row = []
+                for w in range(0, self.width):
+                    row.append(str(self.maze[h][w]))
+                copy.append(row)
+
+        copy[node.x][node.y] = str(node.value)
+
+        for child in node.branches:
+            self.getValues(child, copy)
+
+        return copy
+
+    def printMDP(self, root):
+        maze = self.getValues(root)
+        for i in range(0, self.height):
+            for j in range(0, self.width):
+                if maze[i][j] != '*':
+                    if float(maze[i][j]) > 0:
+                        print("  ",Fore.LIGHTGREEN_EX + str("%.2f" % float(maze[i][j])), end="")
+                    elif float(maze[i][j]) == 0:
+                        print("  ", Fore.RESET + str("%.2f" % float(maze[i][j])), end="")
+                    elif float(maze[i][j]) < 0:
+                        print(" ", Fore.RED + str("%.2f" % float(maze[i][j])), end="")
+                else:
+                    print("   ", Fore.LIGHTYELLOW_EX + str(maze[i][j]), end="  ")
+            print('\n')
+        print(Fore.RESET)

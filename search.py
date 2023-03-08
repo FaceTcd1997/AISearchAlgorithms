@@ -75,42 +75,43 @@ def getCost(start, goal, maze):
        path: a list of nodes that represent the path to the current node (default to an empty list)
      RETURN:
        tuple containing the list of nodes composing the path to the goal and the list of nodes visited"""
-
-#TODO
-def depthFirstSearch(node, goal):
-    return treeSearch(node, goal, True)
-def breadthFirstSearch(node, goal):
-    return treeSearch(node, goal, False)
-def aStarSearch(node, goal):
-    return heuristicSearch(node, goal)
-
-def treeSearch(node, goal, flag, visited=None, queue=None, level=None):
+def depthFirstSearch(node, goal, visited=None, queue=None):
     if visited is None:
         visited = set()
     if queue is None:
         queue = []
-    if level is None:
-        level = 0
-    else:
-        level = level + 1
 
     visited.add(node)
 
     if node == goal:
-        # queue.clear()
         return visited
 
     for child in node.branches:
-        queue.append([child, level])
+        queue.append(child)
 
-    #TODO
-    # Sorting queue influence execution time ?!?
-    queue.sort(key=lambda tup: tup[1], reverse=flag)
-    treeSearch(queue.pop(0)[0], goal, flag, visited, queue, level)
+    depthFirstSearch(queue.pop(len(queue) - 1), goal, visited, queue)
 
     return visited
 
-def heuristicSearch(node, goal, visited=None, queue=None):
+def breadthFirstSearch(node, goal, visited=None, queue=None):
+    if visited is None:
+        visited = set()
+    if queue is None:
+        queue = []
+
+    visited.add(node)
+
+    if node == goal:
+        return visited
+
+    for child in node.branches:
+        queue.append(child)
+
+    breadthFirstSearch(queue.pop(0), goal, visited, queue)
+
+    return visited
+
+def aStarSearch(node, goal, visited=None, queue=None):
     if visited is None:
         visited = set()
     if queue is None:
@@ -127,6 +128,6 @@ def heuristicSearch(node, goal, visited=None, queue=None):
     #TODO
     # Sorting queue influence execution time ?!?
     queue.sort(key=lambda tup: tup[1])
-    heuristicSearch(queue.pop(0)[0], goal, visited, queue)
+    aStarSearch(queue.pop(0)[0], goal, visited, queue)
 
     return visited

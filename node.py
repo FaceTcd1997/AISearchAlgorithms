@@ -1,11 +1,12 @@
 
 class Node:
 
-    def __init__(self, x, y, cost=None, heuristic=None):
+    def __init__(self, x, y, cost=None, heuristic=None, value=None):
         self.x = x
         self.y = y
         self.cost = cost
         self.heuristic = heuristic
+        self.value = 0
         self.branches = []
 
     def addChild(self, node):
@@ -22,7 +23,6 @@ class Node:
 
     def __hash__(self):
         return hash((self.x, self.y))
-
 
 def getNeighbors(maze, node):
     neighbors = set()
