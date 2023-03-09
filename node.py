@@ -9,6 +9,7 @@ class Node:
         self.value = 0
         self.branches = []
 
+    # Add child to the node
     def addChild(self, node):
         self.branches.append(node)
 
@@ -24,26 +25,7 @@ class Node:
     def __hash__(self):
         return hash((self.x, self.y))
 
-def getNeighbors(maze, node):
-    neighbors = set()
-    x, y = node.x, node.y
-    if y > 0 and maze[x][y - 1] != '*':  # check left neighbor
-        neighbors.add(Node(x, y - 1))
-    if y < len(maze[0]) - 1 and maze[x][y + 1] != '*':  # check right neighbor
-        neighbors.add(Node(x, y + 1))
-    if x > 0 and maze[x - 1][y] != '*':  # check top neighbor
-        neighbors.add(Node(x - 1, y))
-    if x < len(maze) - 1 and maze[x + 1][y] != '*':  # check bottom neighbor
-        neighbors.add(Node(x + 1, y))
-    return neighbors
-
-def diff(list1, list2):
-    out = []
-    for node in list1:
-        if node not in list2:
-            out.append(node)
-    return out
-
+# Convert a maze to the correspondent tree
 def mazeToTree(maze, node, visited=None):
     if visited is None:
         visited = []
@@ -62,3 +44,25 @@ def mazeToTree(maze, node, visited=None):
             node.addChild(neighbor)  # add neighbor to the tree as a child of the current node
 
     return node
+
+# Get neighbors of a node from the maze
+def getNeighbors(maze, node):
+    neighbors = set()
+    x, y = node.x, node.y
+    if y > 0 and maze[x][y - 1] != '*':  # check left neighbor
+        neighbors.add(Node(x, y - 1))
+    if y < len(maze[0]) - 1 and maze[x][y + 1] != '*':  # check right neighbor
+        neighbors.add(Node(x, y + 1))
+    if x > 0 and maze[x - 1][y] != '*':  # check top neighbor
+        neighbors.add(Node(x - 1, y))
+    if x < len(maze) - 1 and maze[x + 1][y] != '*':  # check bottom neighbor
+        neighbors.add(Node(x + 1, y))
+    return neighbors
+
+# Get not shared elements
+def diff(list1, list2):
+    out = []
+    for node in list1:
+        if node not in list2:
+            out.append(node)
+    return out

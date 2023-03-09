@@ -1,8 +1,7 @@
-import random
 from colorama import init
 from colorama import Fore
+import random
 import numpy as np
-
 
 class MazeGenerator:
     def __init__(self, height, width):
@@ -15,58 +14,6 @@ class MazeGenerator:
         self.maze = []
         self.start = []
         self.end = []
-
-
-    ## Methods
-    def printMaze(self, maze):
-        for i in range(0, self.height):
-            for j in range(0, self.width):
-                if maze[i][j] == 'u':
-                    print(Fore.BLUE + str(maze[i][j]), end="  ")
-                elif maze[i][j] == 'o':
-                    print(Fore.RESET + str(maze[i][j]), end="  ")
-                elif maze[i][j] == 'v':
-                    print(Fore.BLUE + str(maze[i][j]), end="  ")
-                elif maze[i][j] == 'S' or maze[i][j] == 'G' or maze[i][j] == 'p':
-                    print(Fore.LIGHTGREEN_EX + str(maze[i][j]), end="  ")
-                else:
-                    print(Fore.RED + str(maze[i][j]), end="  ")
-
-            print('')
-        print(Fore.RESET)
-
-    def printMazeSmooth(self, maze):
-        out = ""
-        for i in range(0, self.height):
-            for j in range(0, self.width):
-                if maze[i][j] == 'u':
-                    out = out + Fore.BLUE + str(maze[i][j]) + "  "
-                elif maze[i][j] == 'o':
-                    out = out + Fore.RESET + str(maze[i][j]) + "  "
-                elif maze[i][j] == 'v':
-                    out = out + Fore.BLUE + str(maze[i][j]) + "  "
-                elif maze[i][j] == 'S' or maze[i][j] == 'G' or maze[i][j] == 'p':
-                    out = out + Fore.LIGHTGREEN_EX + str(maze[i][j]) + "  "
-                else:
-                    out = out + Fore.RED + str(maze[i][j]) + "  "
-            out = out + '\n'
-        print(Fore.RESET)
-        # print(out, end='\r')
-        return out
-
-    # Find number of surrounding cells
-    def surroundingCells(self, rand_wall):
-        s_cells = 0
-        if self.maze[rand_wall[0] - 1][rand_wall[1]] == 'o':
-            s_cells += 1
-        if self.maze[rand_wall[0] + 1][rand_wall[1]] == 'o':
-            s_cells += 1
-        if self.maze[rand_wall[0]][rand_wall[1] - 1] == 'o':
-            s_cells += 1
-        if self.maze[rand_wall[0]][rand_wall[1] + 1] == 'o':
-            s_cells += 1
-
-        return s_cells
 
     # Generate the maze
     def generateMaze(self):
@@ -265,22 +212,6 @@ class MazeGenerator:
                 if self.maze[i][j] == 'u':
                     self.maze[i][j] = '*'
 
-        #TODO
-        # Set random entrance and exit
-
-        # Set entrance and exit
-        # for i in range(0, self.width):
-        #     if self.maze[1][i] == 'o':
-        #         self.maze[0][i] = 'o'
-        #         self.start = [0, i]
-        #         break
-        #
-        # for i in range(self.width - 1, 0, -1):
-        #     if self.maze[self.height - 2][i] == 'o':
-        #         self.maze[self.height - 1][i] = 'o'
-        #         self.end = [self.height - 1, i]
-        #         break
-
         rnd = random.randint(0, self.width - 1)
         while not self.maze[1][rnd] == 'o':
             rnd = random.randint(0, self.width - 1)
@@ -298,12 +229,47 @@ class MazeGenerator:
         self.printMaze(self.maze)
         return self.maze
 
+    # Find number of surrounding cells
+    def surroundingCells(self, rand_wall):
+        s_cells = 0
+        if self.maze[rand_wall[0] - 1][rand_wall[1]] == 'o':
+            s_cells += 1
+        if self.maze[rand_wall[0] + 1][rand_wall[1]] == 'o':
+            s_cells += 1
+        if self.maze[rand_wall[0]][rand_wall[1] - 1] == 'o':
+            s_cells += 1
+        if self.maze[rand_wall[0]][rand_wall[1] + 1] == 'o':
+            s_cells += 1
+
+        return s_cells
+
+    # Print maze
+    def printMaze(self, maze):
+        for i in range(0, self.height):
+            for j in range(0, self.width):
+                if maze[i][j] == 'u':
+                    print(Fore.BLUE + str(maze[i][j]), end="  ")
+                elif maze[i][j] == 'o':
+                    print(Fore.RESET + str(maze[i][j]), end="  ")
+                elif maze[i][j] == 'v':
+                    print(Fore.BLUE + str(maze[i][j]), end="  ")
+                elif maze[i][j] == 'S' or maze[i][j] == 'G' or maze[i][j] == 'p':
+                    print(Fore.LIGHTGREEN_EX + str(maze[i][j]), end="  ")
+                else:
+                    print(Fore.RED + str(maze[i][j]), end="  ")
+
+            print('')
+        print(Fore.RESET)
+
+    # Retrieve the start of the maze
     def getStart(self):
         return self.start
 
+    # Retrieve the end of the maze
     def getEnd(self):
         return self.end
 
+    # Retrieve the number of nodes
     def getNumberOfNodes(self):
         n = 0
         for h in range(0, self.height):
@@ -312,6 +278,7 @@ class MazeGenerator:
                     n += 1
         return n
 
+    # Print the maze showing path to the end and nodes visited
     def printSolvedMaze(self, path, visited):
         # Generate a copy of maze instead of referencing it (avoids override)
         copy = np.array(self.maze)
@@ -326,22 +293,7 @@ class MazeGenerator:
         copy[goal[0]][goal[1]] = 'G'
         self.printMaze(copy)
 
-    def getValues(self, node, copy = None):
-        if copy is None:
-            copy = []
-            for h in range(0, self.height):
-                row = []
-                for w in range(0, self.width):
-                    row.append(str(self.maze[h][w]))
-                copy.append(row)
-
-        copy[node.x][node.y] = str(node.value)
-
-        for child in node.branches:
-            self.getValues(child, copy)
-
-        return copy
-
+    # Print the values of nodes for MDP
     def printMDP(self, root):
         maze = self.getValues(root)
         for i in range(0, self.height):
@@ -357,3 +309,20 @@ class MazeGenerator:
                     print("   ", Fore.LIGHTYELLOW_EX + str(maze[i][j]), end="  ")
             print('\n')
         print(Fore.RESET)
+
+    # Add values of nodes to the maze
+    def getValues(self, node, copy = None):
+        if copy is None:
+            copy = []
+            for h in range(0, self.height):
+                row = []
+                for w in range(0, self.width):
+                    row.append(str(self.maze[h][w]))
+                copy.append(row)
+
+        copy[node.x][node.y] = str(node.value)
+
+        for child in node.branches:
+            self.getValues(child, copy)
+
+        return copy
