@@ -13,8 +13,11 @@ from mdp import valueIteration
 from mdp import policyIteration
 
 # Define height and width of the maze from args
-height = int(sys.argv[1])
-width = int(sys.argv[2])
+#height = int(sys.argv[1])
+#width = int(sys.argv[2])
+
+height = 40
+width = 40
 
 # Initialize generator
 mazeGenerator = MazeGenerator(height, width)

@@ -1,4 +1,5 @@
 import random
+import heapq
 from node import mazeToTree
 from node import Node
 
@@ -72,6 +73,8 @@ def aStarSearch(node, goal, visited=None, queue=None):
         visited = set()
     if queue is None:
         queue = []
+    if node.cost is None:
+        node.cost = 0
 
     visited.add(node)
 
@@ -79,12 +82,13 @@ def aStarSearch(node, goal, visited=None, queue=None):
         return visited
 
     for child in node.branches:
-        queue.append([child, child.cost + child.heuristic])
+        child.cost = node.cost + 1
+        heapq.heappush(queue, (child.cost + child.heuristic, child))
 
     # A* search uses a priority queue
     # priority is given to the node with the smaller sum of cost and heuristic
-    queue.sort(key=lambda tup: tup[1])
-    aStarSearch(queue.pop(0)[0], goal, visited, queue)
+    aStarSearch(heapq.heappop(queue)[1], goal, visited, queue)
+
 
     return visited
 
@@ -134,10 +138,10 @@ def getCost(start, goal, maze):
     tree = mazeToTree(maze, shadow)
 
     # Real cost of the node is the distance to the goal
-    start.cost = len(getPath(tree, goal)) - 1
+    cost = len(getPath(tree, goal)) - 1
     # Random generate an admissible heuristic for the node (heuristic < cost)
-    if start.cost > 0:
-        start.heuristic = random.randint(0, start.cost - 1)
+    if cost > 0:
+        start.heuristic = random.randint(int((cost - 1)/2), cost - 1)
     else:
         start.heuristic = 0
     return

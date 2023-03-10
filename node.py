@@ -13,17 +13,28 @@ class Node:
     def addChild(self, node):
         self.branches.append(node)
 
-    def __eq__(self, other):
+    def __eq__(self, other): # to allow comparison
         if isinstance(other, self.__class__):
             return (self.x == other.x) and (self.y == other.y)
         else:
             return False
 
-    def __ne__(self, other):
+    def __ne__(self, other): # to allow comparison
         return not self.__eq__(other)
 
-    def __hash__(self):
+    def __hash__(self): # to allow iterations
         return hash((self.x, self.y))
+
+    def __lt__(self, other): # to allow < comparison
+        if isinstance(other, self.__class__):
+            return (self.x < other.x) and (self.y < other.y)
+        else:
+            return False
+    def __le__(self, other): # to allow <= comparison
+        if isinstance(other, self.__class__):
+            return (self.x <= other.x) and (self.y <= other.y)
+        else:
+            return False
 
 # Convert a maze to the correspondent tree
 def mazeToTree(maze, node, visited=None):
